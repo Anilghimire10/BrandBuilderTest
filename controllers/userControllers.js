@@ -2,19 +2,16 @@ import User from "../model/user.js";
 
 export const createUser = async (req, res, next) => {
   try {
-    const { name, email, position } = req.body;
+    const { name, email } = req.body;
 
     const users = await User.findOne({ email });
     if (users) {
       return res.status(404).json({ message: "Users already exists" });
     }
 
-    const maxPosition = await User.findOne().sort({ position: -1 });
+    const count = await User.countDocuments();
 
-    let newPosition = 1;
-    if (maxPosition) {
-      newPosition = maxPosition.position + 1;
-    }
+    const newPosition = count + 1;
 
     const newUser = new User({
       name,
